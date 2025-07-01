@@ -1,29 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Stopwatch Task</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <title>Stopwatch Web App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f4f8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 50px;
+    }
+    h1 {
+      color: #333;
+    }
+    #time {
+      font-size: 48px;
+      margin: 20px 0;
+    }
+    .buttons {
+      margin-bottom: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 18px;
+      margin: 5px;
+      cursor: pointer;
+      border: none;
+      border-radius: 8px;
+      background-color: #007bff;
+      color: white;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      width: 200px;
+    }
+    li {
+      background: #e3f2fd;
+      margin: 5px 0;
+      padding: 10px;
+      border-radius: 6px;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <div class="task-box">
-      <p>TASK 02</p>
-    </div>
-    <div class="content">
-      <div class="left">
-        <div class="icon">⏱️</div>
-        <h2>STOPWATCH</h2>
-        <h3>WEB APPLICATION</h3>
-      </div>
-      <div class="right">
-        <p>Create an interactive and user-friendly stopwatch web application.</p>
-        <p>
-          Implement functions for starting, pausing, and resetting the stopwatch, as well as tracking and displaying lap times, users can accurately measure and record time intervals.
-        </p>
-      </div>
-    </div>
+  <h1>Stopwatch</h1>
+  <div id="time">00:00:00</div>
+  <div class="buttons">
+    <button onclick="startStop()">Start</button>
+    <button onclick="pause()">Pause</button>
+    <button onclick="reset()">Reset</button>
+    <button onclick="lap()">Lap</button>
   </div>
+  <ul id="laps"></ul>
+
+  <script>
+    let startTime = 0;
+    let elapsedTime = 0;
+    let interval;
+    let isRunning = false;
+
+    function updateTime() {
+      const now = Date.now();
+      elapsedTime = now - startTime;
+      const time = new Date(elapsedTime);
+      const minutes = String(time.getUTCMinutes()).padStart(2, '0');
+      const seconds = String(time.getUTCSeconds()).padStart(2, '0');
+      const milliseconds = String(Math.floor(time.getUTCMilliseconds() / 10)).padStart(2, '0');
+      document.getElementById('time').textContent = `${minutes}:${seconds}:${milliseconds}`;
+    }
+
+    function startStop() {
+      if (!isRunning) {
+        startTime = Date.now() - elapsedTime;
+        interval = setInterval(updateTime, 10);
+        isRunning = true;
+      }
+    }
+
+    function pause() {
+      clearInterval(interval);
+      isRunning = false;
+    }
+
+    function reset() {
+      clearInterval(interval);
+      isRunning = false;
+      elapsedTime = 0;
+      document.getElementById('time').textContent = '00:00:00';
+      document.getElementById('laps').innerHTML = '';
+    }
+
+    function lap() {
+      if (!isRunning) return;
+      const lapTime = document.getElementById('time').textContent;
+      const li = document.createElement('li');
+      li.textContent = `Lap: ${lapTime}`;
+      document.getElementById('laps').appendChild(li);
+    }
+  </script>
 </body>
 </html>
